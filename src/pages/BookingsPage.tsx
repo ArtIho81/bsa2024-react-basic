@@ -1,21 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BookingCard } from "../components/BookingCard";
-import { BoockingTrip } from "../App";
+import { useSelector } from "react-redux";
+import { RootState, useAppDispatch } from "../store/store";
+import { BookingTrip, getBookingTrips } from "../store/slices/tripSlice";
+import { User } from "../store/slices/userSlice";
 
-type BookingPageProps = {
-  bookingTrips: BoockingTrip[];
-  onDisappear: (id: string) => void;
-};
+export const BookingsPage = () => {
+  const dispatch = useAppDispatch();
 
-export const BookingsPage: React.FC<BookingPageProps> = ({
-  bookingTrips,
-  onDisappear,
-}) => {
+  const user = useSelector<RootState, User>((state) => state.user.user);
+
+  useEffect(() => {
+    dispatch(getBookingTrips());
+  },[]);
+
+  const bookingTrips = useSelector<RootState, BookingTrip[]>(
+    (state) => state.trips.bookingTrips
+  ).filter((trip) => trip.userId === user.id);
+
   return (
     <main className="bookings-page">
       <h1 className="visually-hidden">Travel App</h1>
       <ul className="bookings__list">
-        {bookingTrips
+        {[...bookingTrips]
           .sort(
             (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
           )
@@ -26,8 +33,7 @@ export const BookingsPage: React.FC<BookingPageProps> = ({
               title={booking.trip.title}
               guests={booking.guests}
               date={booking.date}
-              totalPrice={booking.trip.price * booking.guests}
-              onClick={() => onDisappear(booking.id)}
+              totalPrice={booking.totalPrice}
             />
           ))}
       </ul>

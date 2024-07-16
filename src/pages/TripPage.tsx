@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Trip } from "./MainPage";
-import allTrips from "../data/trips.json";
 import { BookingTripModal } from "./BookingTripModal";
-import { Button } from "../components/Button";
-import { BoockingTrip } from "../App";
+import { Button } from "../components/Button"
+import { RootState, useAppDispatch } from "../store/store";
+import { getTrip } from "../store/slices/tripSlice";
+import { useSelector } from "react-redux";
 
-type TripPageProps = {
-  onBooking: (trip: BoockingTrip) => void;
-};
-export const TripPage: React.FC<TripPageProps> = ({ onBooking }) => {
+export const TripPage = () => {
   const { tripId } = useParams();
-  const [trip, setTrip] = useState<Trip>();
   const [bookingTrip, setBookingTrip] = useState<boolean>(false);
+  const trip = useSelector<RootState, Trip>((state) => state.trips.trip);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    setTrip((allTrips as Trip[]).find((trip) => trip.id === tripId));
+    dispatch(getTrip(tripId));
   }, []);
 
   return trip ? (
@@ -79,7 +78,6 @@ export const TripPage: React.FC<TripPageProps> = ({ onBooking }) => {
           level={trip.level}
           price={trip.price}
           onClose={() => setBookingTrip(false)}
-          onBooking={onBooking}
         />
       )}
     </main>

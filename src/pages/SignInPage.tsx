@@ -1,23 +1,38 @@
-import React, { FormEventHandler, MouseEventHandler } from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { SignInput } from "../components/SignInput";
 import { useInput } from "../hooks/useInput";
 import { isEmail, isValidPassword } from "../helpers/validation";
+import { RootState, useAppDispatch } from "../store/store";
+import { authUser, Status } from "../store/slices/userSlice";
+import { useSelector } from "react-redux";
 
 export const SignInPage = () => {
   const emailInput = useInput("");
   const passwordInput = useInput("");
+  const dispatch = useAppDispatch();
 
-  const checkFieldsValid = (): boolean => {
+  const checkFieldsValid: () => boolean = () => {
     const email: boolean = isEmail(emailInput.value);
     const password: boolean = isValidPassword(passwordInput.value);
 
     return email && password;
   };
   const navigate = useNavigate();
+  const status = useSelector<RootState, string>((state) => state.user.status);
+console.log(status)
+  useEffect(() => {
+    status === Status.RESOLVED && navigate("/");
+  }, [status]);
 
   const onSubmit = () => {
-    checkFieldsValid() && navigate("/");
+    checkFieldsValid() &&
+      dispatch(
+        authUser({
+          email: emailInput.value,
+          password: passwordInput.value,
+        })
+      );
   };
 
   return (

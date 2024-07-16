@@ -4,7 +4,11 @@ import { useInput } from "../hooks/useInput";
 import { SignInput } from "../components/SignInput";
 import { Button } from "../components/Button";
 import { isDateValid, isGuestsValid } from "../helpers/validation";
-import { BoockingTrip } from "../App";
+import { useSelector } from "react-redux";
+import { RootState, useAppDispatch } from "../store/store";
+import { User } from "../store/slices/userSlice";
+import { BookingTripRequest } from "../api/requests";
+import { bookTrip } from "../store/slices/tripSlice";
 
 type BookingTripModalProps = {
   id: string;
@@ -13,38 +17,24 @@ type BookingTripModalProps = {
   duration: number;
   price: number;
   onClose: () => void;
-  onBooking: (trip: BoockingTrip) => void;
 };
 
-export const BookingTripModal: React.FC<BookingTripModalProps> = ({
-  id,
-  title,
-  duration,
-  level,
-  price,
-  onClose,
-  onBooking,
-}) => {
+export const BookingTripModal: React.FC<BookingTripModalProps> = (props) => {
+  const { id, title, duration, level, price, onClose } = props;
+  const user = useSelector<RootState, User>((state) => state.user.user);
+  const dispatch = useAppDispatch();
+
   const guestsInput = useInput("1");
   const dateInput = useInput("");
 
   const bookingTrip = (date: string, guests: number) => {
     if (isDateValid(date) && isGuestsValid(guests)) {
-      const bookingTrip: BoockingTrip = {
-        id: Date.now().toString(),
+      const bookingTrip: BookingTripRequest = {
         tripId: id,
-        userId: "qwertynnvdsnkvnsdmk;sdmv",
         guests,
         date,
-        trip: {
-          title,
-          duration,
-          price,
-        },
-        totalPrice: guests * price,
-        createdAt: new Date().toISOString(),
       };
-      onBooking(bookingTrip);
+      dispatch(bookTrip(bookingTrip));
       onClose();
     }
   };

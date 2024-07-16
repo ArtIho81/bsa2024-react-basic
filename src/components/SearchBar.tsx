@@ -1,23 +1,23 @@
 import { Select } from "./Select";
 import { SearchInput } from "./SearchInput";
 import { ChangeEvent } from "react";
+import { Searches } from "../pages/MainPage";
 
 type SearchBarProps = {
   search: string;
   duration: string;
   level: string;
-  onSearch: (event: ChangeEvent<HTMLInputElement>) => void;
-  onDuration: (event:ChangeEvent<HTMLSelectElement>) => void;
-  onLevel: (event: ChangeEvent<HTMLSelectElement>) => void;
+  onChange: (
+    event: ChangeEvent<HTMLSelectElement | HTMLInputElement>,
+    type: keyof Searches
+  ) => void;
 };
 
 export const SearchBar: React.FC<SearchBarProps> = ({
   search,
   duration,
   level,
-  onSearch,
-  onDuration,
-  onLevel,
+  onChange,
 }) => {
   const durations: { [key: string]: string }[] = [
     { "": "duration" },
@@ -43,19 +43,19 @@ export const SearchBar: React.FC<SearchBarProps> = ({
             name="search"
             type="search"
             value={search}
-            onChange={onSearch}
+            onChange={(e) => onChange(e, "search")}
           />
           <Select
             name="duration"
             values={durations}
             selected={duration}
-            onChange={onDuration}
+            onChange={(e) => onChange(e, "duration")}
           />
           <Select
             name="level"
             values={levels}
             selected={level}
-            onChange={onLevel}
+            onChange={(e) => onChange(e, "level")}
           />
         </form>
       </section>

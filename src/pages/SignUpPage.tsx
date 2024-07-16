@@ -3,6 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { SignInput } from "../components/SignInput";
 import { useInput } from "../hooks/useInput";
 import { isEmail, isValidPassword } from "../helpers/validation";
+import { RootState, useAppDispatch } from "../store/store";
+import { authUser, Status } from "../store/slices/userSlice";
+import { useSelector } from "react-redux";
 
 export const SignUpPage = () => {
   const fullNameInput = useInput("");
@@ -16,10 +19,20 @@ export const SignUpPage = () => {
 
     return fullName && email && password;
   };
-
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const status = useSelector<RootState, string>((state) => state.user.status);
+  status === Status.RESOLVED && navigate("/");
+
   const onSubmit = () => {
-    checkFieldsValid() && navigate("/");
+    checkFieldsValid() &&
+      dispatch(
+        authUser({
+          fullName: fullNameInput.value,
+          email: emailInput.value,
+          password: passwordInput.value,
+        })
+      );
   };
 
   return (

@@ -44,17 +44,9 @@ function App() {
         <Route path="/sign-in" element={<SignInPage />} />
         <Route
           path="/trip/:tripId"
-          element={<TripPage onBooking={makeBookingTrip} />}
+          element={<TripPage />}
         />
-        <Route
-          path="/bookings"
-          element={
-            <BookingsPage
-              bookingTrips={bookingTrips}
-              onDisappear={disappearBooking}
-            />
-          }
-        />
+        <Route path="/bookings" element={<BookingsPage />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       <Footer />

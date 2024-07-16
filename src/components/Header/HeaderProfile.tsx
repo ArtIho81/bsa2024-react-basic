@@ -1,11 +1,17 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { Link} from "react-router-dom";
+import { RootState, useAppDispatch } from "../../store/store";
+import { getUser, signOut, User } from "../../store/slices/userSlice";
 
-type HeaderProfileProps = {
-  username: string;
-};
+export const HeaderProfile = () => {
+  const dispatch = useAppDispatch();
+  const user = useSelector<RootState, User>((state) => state.user.user);
 
-export const HeaderProfile: React.FC<HeaderProfileProps> = ({ username }) => {
+  useEffect(() => {
+    localStorage.getItem("token") && dispatch(getUser());
+  }, []);
+
   return (
     <div
       data-test-id="header-profile-nav"
@@ -19,13 +25,14 @@ export const HeaderProfile: React.FC<HeaderProfileProps> = ({ username }) => {
           data-test-id="header-profile-nav-username"
           className="profile-nav__item"
         >
-          {username}
+          {user?.fullName}
         </li>
         <li className="profile-nav__item">
           <Link
             data-test-id="header-profile-nav-sign-out"
             to="/sign-in"
             className="profile-nav__sign-out button"
+            onClick={() => dispatch(signOut())}
           >
             Sign Out
           </Link>

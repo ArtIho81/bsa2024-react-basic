@@ -17,7 +17,7 @@ export const HeaderNav = () => {
           </Link>
         </li>
         <li className="nav-header__item" title="Profile">
-          <HeaderProfile username={"John Doe"} />
+          <HeaderProfile />
         </li>
       </ul>
     </nav>

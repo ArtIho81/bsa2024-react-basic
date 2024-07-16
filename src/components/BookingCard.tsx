@@ -1,4 +1,8 @@
 import React from "react";
+import { RootState, useAppDispatch } from "../store/store";
+import { cancelBookingTrip } from "../store/slices/tripSlice";
+import { useSelector } from "react-redux";
+import { User } from "../store/slices/userSlice";
 
 type BookingCardProps = {
   id: string;
@@ -6,17 +10,12 @@ type BookingCardProps = {
   guests: number;
   date: string;
   totalPrice: number;
-  onClick: (id: string) => void;
 };
 
-export const BookingCard: React.FC<BookingCardProps> = ({
-  id,
-  title,
-  guests,
-  date,
-  totalPrice,
-  onClick,
-}) => {
+export const BookingCard: React.FC<BookingCardProps> = (props) => {
+  const { id, title, guests, date, totalPrice } = props;
+  const dispatch = useAppDispatch();
+
   return (
     <li data-test-id="booking" className="booking">
       <h3 data-test-id="booking-title" className="booking__title">
@@ -35,7 +34,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
         data-test-id="booking-cancel"
         className="booking__cancel"
         title="Cancel booking"
-        onClick={() => onClick(id)}
+        onClick={() => dispatch(cancelBookingTrip({ id }))}
       >
         <span className="visually-hidden">Cancel booking</span>×
       </button>
